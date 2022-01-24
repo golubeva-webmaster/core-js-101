@@ -27,8 +27,18 @@
  *  21 => 'Fizz'
  *
  */
-function getFizzBuzz(/* num */) {
-  throw new Error('Not implemented');
+function getFizzBuzz(num) {
+  let str = '';
+  if (num % 3 === 0) {
+    str += 'Fizz';
+  }
+  if (num % 5 === 0) {
+    str += 'Buzz';
+  }
+  if (num % 3 !== 0 && num % 5 !== 0) {
+    return num;
+  }
+  return str;
 }
 
 
@@ -43,8 +53,11 @@ function getFizzBuzz(/* num */) {
  *   5  => 120
  *   10 => 3628800
  */
-function getFactorial(/* n */) {
-  throw new Error('Not implemented');
+function getFactorial(n) {
+  if (n === 1) {
+    return 1;
+  }
+  return n * getFactorial(n - 1);
 }
 
 
@@ -60,8 +73,11 @@ function getFactorial(/* n */) {
  *   5,10  =>  45 ( = 5+6+7+8+9+10 )
  *   -1,1  =>  0  ( = -1 + 0 + 1 )
  */
-function getSumBetweenNumbers(/* n1, n2 */) {
-  throw new Error('Not implemented');
+function getSumBetweenNumbers(n1, n2) {
+  return new Array(n2 - n1 + 1)
+    .fill(0)
+    .map((item, ind) => n1 + ind)
+    .reduce((sum, item) => sum + item, 0);
 }
 
 
@@ -80,8 +96,8 @@ function getSumBetweenNumbers(/* n1, n2 */) {
  *   10,1,1   =>  false
  *   10,10,10 =>  true
  */
-function isTriangle(/* a, b, c */) {
-  throw new Error('Not implemented');
+function isTriangle(a, b, c) {
+  return a + b > c && a + c > b && b + c > a;
 }
 
 
@@ -117,8 +133,24 @@ function isTriangle(/* a, b, c */) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  const {
+    top: top1, left: left1, width: width1, height: height1,
+  } = rect1;
+  const {
+    top: top2, left: left2, width: width2, height: height2,
+  } = rect2;
+
+  if (
+    top1 + height1 < top2
+    || left1 + width1 < left2
+    || left2 + width2 < left1
+    || top2 + height2 < top1
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -148,8 +180,8 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  return ((circle.center.x - point.x) ** 2 + (circle.center.y - point.y) ** 2 < circle.radius ** 2);
 }
 
 
@@ -164,8 +196,18 @@ function isInsideCircle(/* circle, point */) {
  *   'abracadabra'  => 'c'
  *   'entente' => null
  */
-function findFirstSingleChar(/* str */) {
-  throw new Error('Not implemented');
+function findFirstSingleChar(str) {
+  const o = {};
+  str.split('').forEach((item) => {
+    if (item in o) {
+      o[item] += 1;
+    } else {
+      o[item] = 1;
+    }
+  });
+
+  const f = Object.entries(o).find((item) => item[1] === 1);
+  return f !== undefined ? f[0] : null;
 }
 
 
@@ -191,8 +233,12 @@ function findFirstSingleChar(/* str */) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  let str = '';
+  str += isStartIncluded ? '[' : '(';
+  str += a < b ? `${a}, ${b}` : `${b}, ${a}`;
+  str += isEndIncluded ? ']' : ')';
+  return str;
 }
 
 
@@ -208,8 +254,12 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str
+    .split(' ')
+    .reverse()
+    .map((item) => item.split('').reverse().join(''))
+    .join(' ');
 }
 
 
@@ -225,8 +275,8 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  return Number(String(num).split('').reverse().join(''));
 }
 
 
@@ -250,8 +300,16 @@ function reverseInteger(/* num */) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const newCcn = String(ccn).split('');
+  const oddCoef = (newCcn.length - 1) % 2 === 0 ? 1 : 0;
+
+  for (let i = oddCoef; i < newCcn.length - 1; i += 2) {
+    const newElement = 2 * newCcn[i] > 9 ? 2 * newCcn[i] - 9 : newCcn[i] * 2;
+    newCcn.splice(i, 1, String(newElement));
+  }
+  const sum = newCcn.reduce((summ, item) => summ + Number(item), 0);
+  return sum % 10 === 0;
 }
 
 /**
@@ -268,8 +326,10 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const sum = (n) => n.toString().split('').map((item) => +item).reduce((summ, item) => summ + item, 0);
+
+  return sum(sum(num));
 }
 
 
@@ -294,8 +354,26 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const arr = str.split('');
+  if (arr.length === '') {
+    return true;
+  }
+  const obj = {
+    '[': ']',
+    '(': ')',
+    '{': '}',
+    '<': '>',
+  };
+  let current = 1;
+  while (current < arr.length) {
+    if (obj[arr[current - 1]] === arr[current]) {
+      arr.splice(current - 1, 2);
+      current -= 2;
+    }
+    current += 1;
+  }
+  return arr.length === 0;
 }
 
 
@@ -319,8 +397,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -336,8 +414,25 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const arrPathes = pathes.map((item) => item.split('/'));
+  const firstElement = arrPathes[0];
+  let path = [];
+
+  for (let i = 0; i < firstElement.length; i += 1) {
+    const elem = firstElement[i];
+
+    if (arrPathes.every((item) => item[i] === elem)) {
+      path = firstElement.slice(0, i + 1);
+    } else {
+      break;
+    }
+  }
+  if (path.length === 0) {
+    return '';
+  }
+  path = `${path.join('/')}/`;
+  return path;
 }
 
 
@@ -359,8 +454,17 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  if (m1.length !== m2[0].length) return null;
+  const res = new Array(m1.length).fill(new Array(m2[0].length).fill(0));
+
+  return res.map((line, lineIndex) => line.map((el, elIndex) => {
+    let result = 0;
+    for (let x = 0; x < m2.length; x += 1) {
+      result += m1[lineIndex][x] * m2[x][elIndex];
+    }
+    return result;
+  }));
 }
 
 
@@ -394,8 +498,33 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  for (let i = 0; i < 3; i += 1) {
+    if (
+      (position[i].length === 3 && position[i].every((item) => item === '0'))
+      || position.every((item) => item[i] === '0')
+    ) {
+      return '0';
+    }
+    if (
+      (position[i].length === 3 && position[i].every((item) => item === 'X'))
+      || position.every((item) => item[i] === 'X')
+    ) {
+      return 'X';
+    }
+  }
+  if (
+    (position[0][0] === position[1][1] && position[1][1] === position[2][2])
+    || (position[2][0] === position[1][1] && position[1][1] === position[0][2])
+  ) {
+    if (position[1][1] === '0') {
+      return '0';
+    }
+    if (position[1][1] === 'X') {
+      return 'X';
+    }
+  }
+  return undefined;
 }
 
 

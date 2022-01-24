@@ -6,7 +6,6 @@
  *                                                                                                *
  ************************************************************************************************ */
 
-
 /**
  * Returns the rectangle object with width and height parameters and getArea() method
  *
@@ -20,10 +19,15 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  return {
+    width,
+    height,
+    getArea() {
+      return this.width * this.height;
+    },
+  };
 }
-
 
 /**
  * Returns the JSON representation of specified object
@@ -35,10 +39,9 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
-
 
 /**
  * Returns the object of specified type from JSON representation
@@ -51,10 +54,11 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const obj = JSON.parse(json);
+  Object.setPrototypeOf(obj, proto);
+  return obj;
 }
-
 
 /**
  * Css selectors builder
@@ -111,35 +115,101 @@ function fromJSON(/* proto, json */) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  Selector: class {
+    constructor() {
+      this.res = '';
+      this.order = 0;
+      this.test = {
+        uniq: (re) => {
+          if (new RegExp(re).test(this.res)) {
+            throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+          }
+        },
+        order: (order) => {
+          if (this.order > order) {
+            throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+          }
+          this.order = order;
+        },
+      };
+    }
+
+    element(v) {
+      this.test.uniq('^[a-zA-Z]');
+      this.test.order(0);
+      this.res += v;
+      return this;
+    }
+
+    id(v) {
+      this.test.uniq('#');
+      this.test.order(1);
+      this.res += `#${v}`;
+      return this;
+    }
+
+    class(v) {
+      this.test.order(2);
+      this.res += `.${v}`;
+      return this;
+    }
+
+    attr(v) {
+      this.test.order(3);
+      this.res += `[${v}]`;
+      return this;
+    }
+
+    pseudoClass(v) {
+      this.test.order(4);
+      this.res += `:${v}`;
+      return this;
+    }
+
+    pseudoElement(v) {
+      this.test.uniq('::');
+      this.test.order(5);
+      this.res += `::${v}`;
+      return this;
+    }
+
+    stringify() {
+      return this.res;
+    }
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  combine(sel1, comb, sel2) {
+    return {
+      stringify() {
+        return `${sel1.stringify()} ${comb} ${sel2.stringify()}`;
+      },
+    };
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  element(v) {
+    return new this.Selector().element(v);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  id(v) {
+    return new this.Selector().id(v);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  class(v) {
+    return new this.Selector().class(v);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  attr(v) {
+    return new this.Selector().attr(v);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoClass(v) {
+    return new this.Selector().pseudoClass(v);
+  },
+
+  pseudoElement(v) {
+    return new this.Selector().pseudoElement(v);
   },
 };
-
 
 module.exports = {
   Rectangle,
